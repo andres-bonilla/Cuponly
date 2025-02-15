@@ -1,0 +1,38 @@
+<?php
+
+namespace Tests\Unit;
+
+use PHPUnit\Framework\TestCase;
+
+class EnvTest extends TestCase
+{
+    /**
+     * Test to check if APP_KEY is set in .env file
+     *
+     * @return void
+     */
+    public function test_app_key_is_set()
+    {
+        // Verificar que APP_KEY no esté vacío'APP_KEY is not set in .env file. Please, run "php artisan key:generate" for a correct use of Cuponly'
+        $this->assertNotEmpty(
+          env('APP_KEY'), "El APP_KEY es:".env('APP_KEY')
+          
+      );
+    }
+
+
+    /**
+     * Test to check if the DB connection is set to SQLite.
+     *
+     * @return void
+     */
+    public function test_db_connection_is_sqlite()
+    {
+        // Verificar que DB_CONNECTION=sqlite
+        $this->assertEquals(
+            'sqlite',
+            env('DB_CONNECTION'),
+            'DB_CONNECTION should be set to sqlite in .env file'
+        );
+    }
+}
