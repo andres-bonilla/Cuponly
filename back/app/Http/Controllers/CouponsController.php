@@ -13,6 +13,7 @@ class CouponsController
     {
       $this->couponsService = $couponsService;
     }
+    //////////////////////////////////////////
 
     public function create(Request $request) {
       $coupon = $this->couponsService->create($request->all());

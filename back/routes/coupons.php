@@ -8,5 +8,5 @@ Route::prefix('coupons')->group(function(){
   Route::delete('{id}', [CouponsController::class, 'delete']);
   Route::get('/', [CouponsController::class, 'getAll']);
   Route::get('{id}', [CouponsController::class, 'find']);
-  Route::get('{id}/users', [CouponsController::class, 'users']);
+  Route::get('{id}/users', [CouponsController::class, 'getUsers']);
 });

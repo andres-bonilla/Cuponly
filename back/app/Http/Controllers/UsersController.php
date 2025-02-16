@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\UsersService;
 
+include_once(app_path('Http/Controllers/helpers/validators.php'));
+
 class UsersController
 {
     protected $usersService;
@@ -13,58 +15,72 @@ class UsersController
     {
       $this->usersService = $usersService;
     }
-
-    public function create(Request $request) {
-      $user = $this->usersService->create($request->all());
-
-      return response()->json(['user', $user], 201);
-    }
     //////////////////////////////////////////
 
-
-    public function update(Request $request) {
-      $user = $this->usersService->update($request->all());
-
-      if (!$user) {
-          return response()->json(['message' => 'User update failed.'], 400);
+    public function register(Request $request) {
+      $validated = userDataValidator($request);
+      
+      if (!$validated['error']) {
+        $result = $this->usersService->register($validated['data']);
+      }
+      else {
+        $result = ['error'=> true, 'data' => $validated['data'], 'code' => 422];
       }
 
-      return response()->json(['user' => $user], 200);
+      return response()->json(['error' => $result['error'], 'data' => $result['data']], $result['code']);
     }
     //////////////////////////////////////////
 
-    public function delete(Request $request) {
-      $isDeleted = $this->usersService->delete($request->id);
+    public function login(Request $request) {
+      $validated = userCredentialsValidator($request);
+
+      if (!$validated['error']) {
+        $result = $this->usersService->login($validated['data']);
+      }
+      else {
+        $result = ['error'=> true, 'data' => $validated['data'], 'code' => 422];
+      }
+    }
+    //////////////////////////////////////////
+
+    public function update($id, Request $request) {
+      $validated = userDataValidator($request);
       
-      if (!$isDeleted) {
-          return response()->json(['message' => 'User not found.'], 404);
-      };
+      if (!$validated['error']) {
+        $result = $this->usersService->update($id, $validated['data']);
+      }
+      else {
+        $result = ['error'=> true, 'data' => $validated['data'], 'code' => 422];
+      }
+
+      return response()->json(['error' => $result['error'], 'data' => $result['data']], $result['code']);
+    }
+    //////////////////////////////////////////
+
+    public function delete($id) {
+      $result = $this->usersService->delete($id);
     
-      return response()->json(['message' => 'User deleted successfully.'], 204);
+      return response()->json(['error' => $result['error'], 'data' => $result['data']], $result['code']);
     }
     //////////////////////////////////////////
 
     public function getAll() {
         $users = $this->usersService->getAll();
 
-        return response()->json(['users' => $users], 200);
+        return response()->json(['error' => false, 'users' => $users], 200);
     }
     //////////////////////////////////////////
     
-    public function find(Request $request) {
-      $user = $this->usersService->find($request->id);
+    public function find($id) {
+      $result = $this->usersService->find($id);
 
-      if (!$user) {
-          return response()->json(['message' => 'User not found.'], 404);
-      }
-      
-      return response()->json(['user' => $user], 200);
+      return response()->json(['error' => $result['error'], 'data' => $result['data']], $result['code']);
     }
     //////////////////////////////////////////
     
-    public function getCoupons(Request $request) {
-        $coupons = $this->usersService->getCoupons($request->id);
+    public function getCoupons($id) {
+        $result = $this->usersService->getCoupons($id);
 
-        return response()->json(['coupons' => $coupons], 200);
+        return response()->json(['error' => $result['error'], 'data' => $result['data']], $result['code']);
     }
 };
