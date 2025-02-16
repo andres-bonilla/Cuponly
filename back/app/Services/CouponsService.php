@@ -33,7 +33,6 @@ class CouponsService
             return false;
         }
 
-          
         $coupon->delete();
         return true;
   }
