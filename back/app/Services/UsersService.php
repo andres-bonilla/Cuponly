@@ -72,6 +72,7 @@ class UsersService
             return  ['error' => true, 'data' => 'User not found.', 'code' => 404];
         }
 
+        $user->tokens()->delete();
         $user->delete();
         return ['error' => false, 'data' => 'User deleted successfully.', 'code' => 204];
   }

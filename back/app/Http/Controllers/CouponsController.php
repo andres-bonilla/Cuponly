@@ -16,55 +16,57 @@ class CouponsController
     //////////////////////////////////////////
 
     public function create(Request $request) {
-      $coupon = $this->couponsService->create($request->all());
+      $validated = couponDataValidator($request);
+      
+      if (!$validated['error']) {
+        $result = $this->couponsService->register($validated['data']);
+      }
+      else {
+        $result = ['error'=> true, 'data' => $validated['data'], 'code' => 422];
+      }
 
-      return response()->json(['coupon', $coupon], 201);
+      return response()->json(['error' => $result['error'], 'data' => $result['data']], $result['code']);
     }
     //////////////////////////////////////////
 
-    public function update(Request $request) {
-      $coupon = $this->couponsService->update($request->all());
-
-      if (!$coupon) {
-          return response()->json(['message' => 'Coupon update failed.'], 400);
+    public function update($id, Request $request) {
+      $validated = couponDataValidator($request);
+      
+      if (!$validated['error']) {
+        $result = $this->couponsService->update($id, $validated['data']);
+      }
+      else {
+        $result = ['error'=> true, 'data' => $validated['data'], 'code' => 422];
       }
 
-      return response()->json(['coupon' => $coupon], 200);
+      return response()->json(['error' => $result['error'], 'data' => $result['data']], $result['code']);
     }
     //////////////////////////////////////////
 
     public function delete(Request $request) {
-      $isDeleted = $this->couponsService->delete($request->id);
-      
-      if (!$isDeleted) {
-          return response()->json(['message' => 'Coupon not found.'], 404);
-      };
+      $result = $this->couponsService->delete($id);
     
-      return response()->json(['message' => 'Coupon deleted successfully.'], 204);
+      return response()->json(['error' => $result['error'], 'data' => $result['data']], $result['code']);
     }
     //////////////////////////////////////////
 
     public function getAll() {
-        $coupons = $this->couponsService->getAll();
+      $coupons = $this->couponsService->getAll();
 
-        return response()->json(['coupons' => $coupons], 200);
+      return response()->json(['error' => false, 'data' => $coupons], 200);
     }
     //////////////////////////////////////////
   
-    public function find(Request $request) {
-      $coupon = $this->couponsService->find($request->id);
+    public function find($id) {
+      $result = $this->couponsService->find($id);
 
-      if (!$coupon) {
-        return response()->json(['message' => 'Coupon not found.'], 404);
-      }
-    
-      return response()->json(['coupon' => $coupon], 200);
+      return response()->json(['error' => $result['error'], 'data' => $result['data']], $result['code']);
     }
     //////////////////////////////////////////
     
-    public function getUsers(Request $request) {
-        $users = $this->couponsService->getUsers($request->id);
+    public function getUsers($id) {
+      $result = $this->couponsService->getUsers($id);
 
-        return response()->json(['users' => $users], 200);
+      return response()->json(['error' => $result['error'], 'data' => $result['data']], $result['code']);
     }
 };

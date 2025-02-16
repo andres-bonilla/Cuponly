@@ -30,3 +30,19 @@ function userCredentialsValidator($request) {
     return ['error' => true, 'data' => 'Credential data not valid.'];
   }
 }
+
+function couponDataValidator($request) {
+  try {
+    $data = $request->validate([
+      'brand' => 'required|string|max:255',
+      'discount' => 'required|integer|min:1|max:100',
+      'expiration' => 'required|date|after:today',
+      'usage_period' => 'required|integer|min:1'
+    ]);
+
+    return ['error' => false, 'data' => $data];
+  }
+  catch (ValidationException $error) {
+    return ['error' => true, 'data' => 'Coupon data not valid.'];
+  }
+}

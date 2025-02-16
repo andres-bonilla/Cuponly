@@ -67,7 +67,7 @@ class UsersController
     public function getAll() {
         $users = $this->usersService->getAll();
 
-        return response()->json(['error' => false, 'users' => $users], 200);
+        return response()->json(['error' => false, 'data' => $users], 200);
     }
     //////////////////////////////////////////
     

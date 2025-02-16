@@ -8,33 +8,44 @@ class CouponsService
 {
   public function create(array $data)
   {
-      return Coupon::create($data);
+    $coupon = Coupon::create($data);
+    if (!$coupon) {
+        return [
+            'error' => true, 
+            'data' => 'Creation failed, please try again.', 
+            'code' => 400
+        ];
+    }
+    return [
+        'error' => false, 
+        'data' => $coupon, 
+        'code' => 201
+    ];
   }
   //////////////////////////////////////////
 
-  public function update(array $data)
+  public function update($id, array $data)
   {
-        $coupon = $this->find($data['id']);
+    $coupon = $this->find($id);
       
-        if (!$coupon) {
-            return null;
-        }
+    if (!$coupon) {
+        return ['error' => true, 'data' => 'Coupon not found.', 'code' => 400];
+    }
 
-        $coupon->update($data);
-        return $coupon;
+    $coupon->update($data);
+    return ['error' => false, 'data' => $coupon, 'code' => 200];
   }
   //////////////////////////////////////////
 
   public function delete($id)
   {
-        $coupon = $this->find($id);
+    $coupon = $this->find($id);
+    if (!$coupon) {
+        return  ['error' => true, 'data' => 'Coupon not found.', 'code' => 404];
+    }
 
-        if (!$coupon) {
-            return false;
-        }
-
-        $coupon->delete();
-        return true;
+    $coupon->delete();
+    return ['error' => false, 'data' => 'Coupon deleted successfully.', 'code' => 204];
   }
   //////////////////////////////////////////
 
@@ -46,18 +57,24 @@ class CouponsService
 
   public function find($id)
   {
-      return Coupon::find($id);
+    $coupon = $this->find($id);
+
+    if (!$coupon) {
+        return ['error' => true, 'data' => 'Coupon not found.', 'code' => 404];
+    }
+
+    return ['error' => false, 'data' => $coupon, 'code' => 200];
   }
   //////////////////////////////////////////
 
   public function getUsers($id)
   {
-        $coupon = $this->find($id);
+    $coupon = $this->find($id);
 
-        if (!$coupon) {
-        return null;
-        }
+    if (!$coupon) {
+        return ['error' => true, 'data' => 'Coupon not found.', 'code' => 404];
+    }
 
-        return $coupon->users;
+    return ['error' => false, 'data' => $coupon->users, 'code' => 200];
   }
 }
