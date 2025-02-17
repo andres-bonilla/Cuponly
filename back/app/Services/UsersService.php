@@ -52,9 +52,23 @@ class UsersService
   }
   //////////////////////////////////////////
 
+    public function logout($request)
+    {
+        $request->user()->tokens->each(function ($token) {
+            $token->delete();
+        });
+
+        return [
+            'error' => false,
+            'data' => 'Logged out successfully.',
+            'code' => 200
+        ];
+    }
+    //////////////////////////////////////////
+
   public function update($id, array $data)
   {
-        $user = $this->find($id);
+        $user = User::find($id);
       
         if (!$user) {
             return ['error' => true, 'data' => 'User not found.', 'code' => 400];
@@ -67,7 +81,7 @@ class UsersService
 
   public function delete($id)
   {
-        $user = $this->find($id);
+        $user = User::find($id);
         if (!$user) {
             return  ['error' => true, 'data' => 'User not found.', 'code' => 404];
         }
@@ -86,7 +100,7 @@ class UsersService
 
   public function find($id)
   {
-    $user = $this->find($id);
+    $user = User::find($id);
 
     if (!$user) {
         return ['error' => true, 'data' => 'User not found.', 'code' => 404];
@@ -98,7 +112,7 @@ class UsersService
 
   public function getCoupons($id)
   {
-        $user = $this->find($id);
+        $user = User::find($id);
 
         if (!$user) {
             return ['error' => true, 'data' => 'User not found.', 'code' => 404];

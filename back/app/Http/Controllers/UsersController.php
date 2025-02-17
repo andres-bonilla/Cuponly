@@ -40,6 +40,15 @@ class UsersController
       else {
         $result = ['error'=> true, 'data' => $validated['data'], 'code' => 422];
       }
+
+      return response()->json(['error' => $result['error'], 'data' => $result['data']], $result['code']);
+    }
+    //////////////////////////////////////////
+
+    public function logout(Request $request) {
+      $result = $this->usersService->logout($request);
+
+      return response()->json(['error' => $result['error'], 'data' => $result['data']], $result['code']);
     }
     //////////////////////////////////////////
 
