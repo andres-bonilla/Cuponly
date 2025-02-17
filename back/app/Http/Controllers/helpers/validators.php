@@ -46,3 +46,13 @@ function couponDataValidator($request) {
     return ['error' => true, 'data' => 'Coupon data not valid.'];
   }
 }
+
+function couponStatusValidator($status) {
+    $validStatuses = ['valid', 'drained', 'expired'];
+
+    if (!in_array($status, $validStatuses)) {
+        return ['error' => true, 'data' => 'Invalid status provided.','code' => 400];
+    }
+
+    return ['error' => false, 'data' => $status,'code' => 200];
+}
