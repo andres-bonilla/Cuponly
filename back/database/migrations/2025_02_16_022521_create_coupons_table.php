@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('brand');
             $table->integer('discount');
-            $table->enum('status', ['valid', 'drained', 'expired']);
+            $table->enum('status', ['valid', 'drained', 'expired'])->default('valid');
             $table->timestamp('expiration');
             $table->integer('usage_period');
             $table->timestamps();

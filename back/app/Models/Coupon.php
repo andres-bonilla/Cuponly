@@ -31,7 +31,7 @@ class Coupon extends Model {
 
   public function users() {
     return $this->belongsToMany(User::class, 'user_coupons')
-        ->withPrivot('usage_status', 'code')
+        ->withPivot('usage_status', 'code')
         ->withTimestamps();
   }
 }

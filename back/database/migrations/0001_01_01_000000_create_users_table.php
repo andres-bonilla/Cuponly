@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->boolean('is_admin')->default(false)->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
@@ -35,6 +36,15 @@ return new class extends Migration
             $table->longText('payload');
             $table->integer('last_activity')->index();
         });
+
+        if (User::count() == 0) {
+            User::create([
+                'name' => 'Admin',
+                'email' => 'admin@cuponly.com',
+                'password' => bcrypt('admin123'),
+                'is_admin' => true,
+            ]);
+        }
     }
 
     /**

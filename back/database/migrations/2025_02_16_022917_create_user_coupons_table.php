@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('coupon_id')->constrained()->onDelete('cascade');
             $table->string('code')->unique();
-            $table->enum('usage_status', ['used', 'redeemed', 'invalid']);
+            $table->enum('usage_status', ['used', 'redeemed', 'invalid'])->default('used');
             $table->timestamps();
         });
     }
