@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_admin',
     ];
 
     /**
@@ -49,7 +50,7 @@ class User extends Authenticatable
 
     public function coupons() {
         return $this->belongsToMany(Coupon::class, 'user_coupons')
-            ->withPrivot('usage_status', 'code')
+            ->withPivot('usage_status', 'code')
             ->withTimestamps();
     }
 }

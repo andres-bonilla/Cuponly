@@ -11,6 +11,9 @@ class Kernel extends HttpKernel
       \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
       'throttle:api',
       \Illuminate\Routing\Middleware\SubstituteBindings::class,
-    ]
+    ],
+    'admin' => \App\Http\Middleware\AdminMiddleware::class,
+    'check-user-id' => \App\Http\Middleware\CheckUserId::class,
+    'public-only-valid' => \App\Http\Middleware\PublicOnlyValidMiddleware::class,
   ];
 }
