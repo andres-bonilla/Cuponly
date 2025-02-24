@@ -1,0 +1,35 @@
+.auth-wrapper {
+  width: 328px;
+  height: auto;
+  overflow-x: hidden;
+  overflow-y: initial;
+  position: relative;
+}
+
+/* Contenedor interno con los formularios en fila */
+.inner-container {
+  display: flex;
+  width: 656px; /* 328px * 2 (porque hay dos formularios) */
+  transition: transform 0.3s ease-in-out;
+}
+
+.auth-content {
+  width: 328px;
+  padding: 12px;
+}
+
+.inner-container.right {
+  transform: translateX(-328px);
+}
+
+.inner-container.left {
+  transform: translateX(0px);
+}
+
+.inner-container.left .signup-form {
+  display: none;
+}
+
+.inner-container.left {
+  width: 328px;
+}
