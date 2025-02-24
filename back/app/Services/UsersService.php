@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+
 
 class UsersService 
 {
@@ -35,7 +37,7 @@ class UsersService
   }
   //////////////////////////////////////////
 
-  public function login($data) {
+  public function login(array $data) {
     $user = User::where('email', $data['email'])->first();
 
     // Si no existe o la contraseña es incorrecta, lanzar error
@@ -54,9 +56,20 @@ class UsersService
 
     public function logout($request)
     {
-        $request->user()->tokens->each(function ($token) {
-            $token->delete();
-        });
+        //$request->user()->tokens->each(function ($token) {
+          //  $token->delete();
+        //});
+
+        if ($request->user()) {
+            $request->user()->tokens->each(function ($token) {
+                $token->delete();
+            });
+        } else {
+            return [
+                'error' => true,
+                'data' => 'User is not authenticated',
+                'code' => 401];
+        }
 
         return [
             'error' => false,
@@ -107,17 +120,5 @@ class UsersService
     }
 
     return ['error' => false, 'data' => $user, 'code' => 200];
-  }
-  //////////////////////////////////////////
-
-  public function getCoupons($id)
-  {
-        $user = User::find($id);
-
-        if (!$user) {
-            return ['error' => true, 'data' => 'User not found.', 'code' => 404];
-        }
-
-        return ['error' => false, 'data' => $user->coupons, 'code' => 200];
   }
 }
