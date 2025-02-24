@@ -1,0 +1,27 @@
+.strip {
+  display: flex;
+  padding: 12px;
+  /*border: 1px solid var(--dark-color);*/
+  border-radius: 8px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.strip-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.strip-brand {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.strip-btn {
+  color: var(--dark-color);
+}
+
+.strip-btn:hover {
+  color: var(--dark-color);
+}
