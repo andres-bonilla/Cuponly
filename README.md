@@ -1,6 +1,6 @@
 # Cuponly  
 
-## 🚀 Plataforma de Códigos Promocionales  
+## 🚀 Plataforma de Cupones Promocionales  
 
 Cuponly es una aplicación web donde los usuarios pueden registrarse, ver ofertas y generar códigos promocionales únicos. Luego, pueden consultar sus códigos guardados y marcarlos como canjeados.  
 
