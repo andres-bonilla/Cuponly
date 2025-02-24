@@ -1,0 +1,40 @@
+.coupon {
+  display: flex;
+  align-items: center;
+  margin: 16px;
+  gap: 16px;
+}
+
+.brand {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 70%;
+  aspect-ratio: 4 / 3;
+}
+
+.brand h3 {
+  font-size: 1.6rem;
+  margin: 0;
+}
+
+.discount {
+  white-space: nowrap;
+}
+
+.button {
+  background-color: var(--color);
+}
+
+.loading {
+  display: block;
+  min-width: 65px;
+  line-height: 46px;
+}
+
+.countdown {
+  display: block;
+  border-top: 1px solid var(--color);
+  margin: 0;
+  padding: 16px 0;
+}

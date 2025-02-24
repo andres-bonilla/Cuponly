@@ -1,0 +1,25 @@
+
+.grid {
+  margin-top: 48px;
+  margin-bottom: 48px;
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  grid-template-columns: repeat(auto-fit, minmax(328px, 1fr));
+  max-width: 1100px;
+  min-width: 328px;
+  width: 80%;
+  gap: 16px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 450px;
+  min-width: 328px;
+  width: 100%;
+}
+
+
