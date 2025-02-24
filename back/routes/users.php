@@ -7,21 +7,18 @@ Route::prefix('users')->group(function(){
 
   Route::post('login', [UsersController::class, 'login'])->name('login');
 
-  Route::post('logout', [UsersController::class, 'logout'])
-    ->middleware('auth:sanctum');
+  Route::middleware(['auth:sanctum'])
+  ->post('logout', [UsersController::class, 'logout']);
 
-  Route::put('{id}', [UsersController::class, 'update'])
-    ->middleware('auth:sanctum', 'check-user-id');
+  Route::middleware(['auth:sanctum'])
+  ->put('{id}', [UsersController::class, 'update']);
 
-  Route::delete('{id}', [UsersController::class, 'delete'])
-    ->middleware('auth:sanctum', 'check-user-id');
+  Route::middleware(['auth:sanctum'])
+  ->delete('{id}', [UsersController::class, 'delete']);
 
-  Route::get('/', [UsersController::class, 'getAll'])
-    ->middleware('auth:sanctum', 'admin');
+  Route::middleware(['auth:sanctum'])
+  ->get('/', [UsersController::class, 'getAll']);
 
-  Route::get('{id}', [UsersController::class, 'find'])
-    ->middleware('auth:sanctum', 'check-user-id');
-
-  Route::get('{id}/coupons', [UsersController::class, 'getCoupons'])
-    ->middleware('auth:sanctum', 'check-user-id');
+  Route::middleware(['auth:sanctum'])
+  ->get('{id}', [UsersController::class, 'find']);
 });

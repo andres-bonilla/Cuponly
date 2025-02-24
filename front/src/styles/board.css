@@ -1,0 +1,38 @@
+.board {
+  display: flex;
+  flex-direction: column;
+  width: 304px;
+  padding: 12px;
+}
+
+.board .dash-button {
+  margin-top: 32px;
+}
+
+.board-btn {
+  margin-top: 20px;
+  align-self: center;
+  transition: border 0.3s ease, background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+
+.board-btn:hover {
+  background: var(--light-color);
+  color: red;
+  border: 2px solid red;
+}
+
+.coupon-list {
+  margin-top: 24px;
+  border-top: 1px solid var(--color);
+}
+
+.coupon-list ul{
+  height: 63.5vh;
+  overflow-y: auto;
+}
+
+.coupon-list .dash-title {
+  margin-top: 10px;
+  margin-bottom: 32px;
+}
+

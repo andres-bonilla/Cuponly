@@ -1,0 +1,47 @@
+#foot {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  padding: 64px 0px;
+}
+
+.label {
+  font-size: 15px;
+  line-height: 18px;
+  font-weight: 500;
+
+  color: var(--dark-color);
+}
+
+#portfolio {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+#portfolio #portfolio-logo {
+  height: 84px;
+  fill: var(--color);
+  transition: fill 0.4s;
+}
+
+#portfolio #name {
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 29px;
+  color: var(--color);
+  transition: color 0.4s;
+}
+
+#portfolio:hover #portfolio-logo {
+    fill: var(--dark-color);
+  }
+
+#portfolio:hover #name {
+  color: var(--dark-color);
+}
+
+#rights {
+  margin: 8px 0px;
+}

@@ -4,6 +4,9 @@ namespace App\Services;
 
 use App\Models\Coupon;
 use App\Models\CouponStatus;
+use App\Models\UserCoupon;
+
+use App\Models\User;
 
 class CouponsService 
 {
@@ -25,53 +28,34 @@ class CouponsService
   }
   //////////////////////////////////////////
 
-  public function assign($couponId, $id)
-  {
-    $coupon = Coupon::find($couponId);
-    $user = User::find($id);
-    if (!$coupon || !$user) {
-      return ['error' => true, 'data' => 'Resourse not found.', 'code' => 400];
-    }
-
-    $userCoupon = UserCoupon::create([
-      'user_id' => $id,
-      'coupon_id' => $couponId,
-    ]);
-    if (!$userCoupon) {
-      return [
-          'error' => true, 
-          'data' => 'Creation failed, please try again.', 
-          'code' => 400
-      ];
-    }
-
-    return [
-        'error' => false, 
-        'data' => 'Coupon assigned successfully.', 
-        'code' => 201
-    ];
+  public function expire(){
+    Coupon::where('status', CouponStatus::VALID)
+          ->where('expiration', '<', now()) // Solo los que ya caducaron
+          ->update(['status' => CouponStatus::EXPIRED]); // Marcar como expirados
+     
+    return $this->generate();
   }
   //////////////////////////////////////////
 
   public function generate(){
     $count = Coupon::where('status', CouponStatus::VALID)->count();
 
-    if ($count >= 20) {
+    if ($count >= 18) {
         return [
             'error' => false,
-            'data' => 'There are already 20 valid coupons.',
+            'data' => 'There are already 18 valid coupons.',
             'code' => 200
           ];
     }
 
     $brands = ['Nike', 'Adidas', 'Puma', 'Reebok', 'Under Armour'];
 
-    while ($count < 20) {
+    while ($count < 18) {
       Coupon::create([
           'brand' => $brands[array_rand($brands)],
           'discount' => rand(1, 13) * 5,
           'status' => CouponStatus::VALID,
-          'expiration' => now()->addDays(rand(1, 20)),
+          'expiration' => now()->addDays(rand(1, 20))->addMinutes(rand(1, 4) * 15)->addSeconds(rand(1, 60)),
           'usage_period' => rand(12, 72),
       ]);
       $count++;
@@ -132,17 +116,5 @@ class CouponsService
     }
 
     return ['error' => false, 'data' => $coupon, 'code' => 200];
-  }
-  //////////////////////////////////////////
-
-  public function getUsers($id)
-  {
-    $coupon = Coupon::find($id);
-
-    if (!$coupon) {
-        return ['error' => true, 'data' => 'Coupon not found.', 'code' => 404];
-    }
-
-    return ['error' => false, 'data' => $coupon->users, 'code' => 200];
   }
 }

@@ -3,30 +3,22 @@
 use App\Http\Controllers\CouponsController;
 
 Route::prefix('coupons')->group(function(){
-  Route::post('/', [CouponsController::class, 'create'])
-    ->middleware('auth:sanctum', 'admin');
+  Route::middleware(['auth:sanctum'])
+  ->post('/create', [CouponsController::class, 'create']);
 
-  Route::post('{couponId}/to/{id}', [CouponsController::class, 'assign'])
-    ->middleware('auth:sanctum', 'check-user-id');
+  Route::post('has-expired', [CouponsController::class, 'expire']);
 
-  Route::post('generate', [CouponsController::class, 'generate']);
+  Route::middleware(['auth:sanctum'])
+  ->put('{id}', [CouponsController::class, 'update']);
 
-  Route::put('{id}', [CouponsController::class, 'update'])
-    ->middleware('auth:sanctum', 'admin');
+  Route::middleware(['auth:sanctum'])
+  ->delete('{id}', [CouponsController::class, 'delete']);
 
-  Route::delete('{id}', [CouponsController::class, 'delete'])
-    ->middleware('auth:sanctum', 'admin');
+  Route::middleware(['auth:sanctum'])
+  ->get('/', [CouponsController::class, 'getAll']);
 
-  Route::get('/', [CouponsController::class, 'getAll'])
-    ->middleware('auth:sanctum', 'admin');
+  Route::get('status/{status}', [CouponsController::class, 'filter']);
 
-  Route::get('status/{status}', [CouponsController::class, 'filter'])
-    ->middleware('public-only-valid'); 
-
-  Route::get('{id}', [CouponsController::class, 'find']);
-
-  Route::get('{id}/users', [CouponsController::class, 'getUsers'])
-    ->middleware('auth:sanctum', 'admin');
-
-  
+  Route::middleware(['auth:sanctum'])
+  ->get('{id}', [CouponsController::class, 'find']);
 });

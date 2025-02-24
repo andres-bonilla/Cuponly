@@ -53,6 +53,11 @@ class UsersController
     //////////////////////////////////////////
 
     public function update($id, Request $request) {
+      $validAccess = accessValidator($request, $id);
+      if (!$validAccess) {
+        return response()->json(['error' => true, 'data' => 'Unauthorized'], 403);
+      }
+
       $validated = userDataValidator($request);
       
       if (!$validated['error']) {
@@ -66,30 +71,38 @@ class UsersController
     }
     //////////////////////////////////////////
 
-    public function delete($id) {
+    public function delete($id, Request $request) {
+      $validAccess = accessValidator($request, $id);
+      if (!$validAccess) {
+        return response()->json(['error' => true, 'data' => 'Unauthorized'], 403);
+      }
+
       $result = $this->usersService->delete($id);
     
       return response()->json(['error' => $result['error'], 'data' => $result['data']], $result['code']);
     }
     //////////////////////////////////////////
 
-    public function getAll() {
-        $users = $this->usersService->getAll();
+    public function getAll(Request $request) {
+      $validAccess = accessValidator($request, 0, false);
+      if (!$validAccess) {
+        return response()->json(['error' => true, 'data' => 'Unauthorized'], 403);
+      }
 
-        return response()->json(['error' => false, 'data' => $users], 200);
+      $users = $this->usersService->getAll();
+
+      return response()->json(['error' => false, 'data' => $users], 200);
     }
     //////////////////////////////////////////
     
-    public function find($id) {
+    public function find($id, Request $request) {
+      $validAccess = accessValidator($request, $id);
+      if (!$validAccess) {
+        return response()->json(['error' => true, 'data' => 'Unauthorized'], 403);
+      }
+
       $result = $this->usersService->find($id);
 
       return response()->json(['error' => $result['error'], 'data' => $result['data']], $result['code']);
-    }
-    //////////////////////////////////////////
-    
-    public function getCoupons($id) {
-        $result = $this->usersService->getCoupons($id);
-
-        return response()->json(['error' => $result['error'], 'data' => $result['data']], $result['code']);
     }
 };
