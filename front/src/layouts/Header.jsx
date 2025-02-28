@@ -16,12 +16,16 @@ export const Header = () => {
     }
   },[event])
 
-  return <header id="head">
-      <h1 id='text-logo'>Cupon<span className='text-with-color'>ly</span></h1>
+  return (
+    <header id="head">
+      <a href="/" className='no-link-style'>
+        <h1 id='text-logo' className='grow'>Cupon<span className='text-with-color'>ly</span></h1>
+      </a>
       <button className='user-button' onClick={() => setOpenDash(prev => !prev)}>
         <UserLogo id="user-logo"/>
       </button>
 
       <Dash openDash={openDash}/>
     </header>
+  );
 }

@@ -78,7 +78,7 @@ li {
 }
 
 .no-link-style {
-  color: inherit;
+  color: inherit !important;
   text-decoration: none;
 }
 

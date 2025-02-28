@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useError } from "../context/ErrorContext";
 import { useNotifier } from "../context/NotifierContext";
+import { createErrorHandler } from "./helpers/createErrorHandler";
+import { handleAPIRes } from "./helpers/handleAPIRes";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -10,7 +12,9 @@ export const useLogIn = () => {
 
   const { logIn } = useAuth();
   const { trigger } = useNotifier();
+
   const { showError } = useError();
+  const handleAPIError = createErrorHandler(showError, 'Error al iniciar sesión.');
 
   const logInUser = (userData) => {
     setIsLoading(true);
@@ -23,23 +27,13 @@ export const useLogIn = () => {
       },
       body: JSON.stringify({...userData})
     })
-    .then((res) => 
-      res.json()
-      .then((result) => ({ result, status: res.status }))
-    )
-    .then(({result, status})=> {
-      if (result.error)
-        showError(result.data, status, false)
-      else {
-        logIn(result.data)
-        trigger("login")
-      }
-      setIsLoading(false);
+    .then(handleAPIRes)
+    .then(({result})=> {
+      logIn(result)
+      trigger("login")
     })
-    .catch((err) => {
-      console.error('Error al iniciar sesión.', err);
-      showError();
-    });
+    .catch(handleAPIError)
+    .finally(()=> setIsLoading(false));
   }
 
   return {isLoading, logInUser};

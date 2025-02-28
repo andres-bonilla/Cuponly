@@ -36,3 +36,9 @@
   margin-bottom: 32px;
 }
 
+
+.coupon-list + .modal-overlay .modal-content {
+  width: 296px;
+  margin-left: 12px;
+  margin-right: 12px;
+}

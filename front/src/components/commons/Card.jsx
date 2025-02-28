@@ -3,11 +3,30 @@ import { useAssignCoupon } from '../../hooks/useAssignCoupon';
 import { useNotifier } from '../../context/NotifierContext';
 import { useAuth } from '../../context/AuthContext';
 
+const brandLogos = {
+  'Adidas': 'adidas',
+  'Asics': 'asics',
+  'Fila': 'fila',
+  'Hummel': 'hummel',
+  'Joma': 'joma',
+  'Kelme': 'kelme',
+  'Le Coq': 'lecoq',
+  'Mizuno': 'mizuno',
+  'New Balance': 'nb',
+  'Nike': 'nike',
+  'Olympikus': 'olympikus',
+  'Puma': 'puma',
+  'Reebok': 'reebok',
+  'Under Armour': 'ua',
+  'Umbro': 'umbro',
+};
+
 export const Card = ({ coupon, countdown, showMessage }) => {
   const {isLoading, assignCoupon} = useAssignCoupon();
 
+
   const { trigger } = useNotifier();
-    const { session } = useAuth();
+  const { session } = useAuth();
 
   const handleClick = ()=> {
     if (session) assignCoupon(coupon.id, showMessage);
@@ -18,7 +37,7 @@ export const Card = ({ coupon, countdown, showMessage }) => {
     <li className={`card`} >
       <div className='coupon'>
         <div className="brand">
-          <h3>{coupon.brand}</h3>
+          <img src={`./src/assets/logos/${brandLogos[coupon.brand]}.svg`} alt={coupon.brand} />
         </div>
       
         <button 

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNotifier } from "../context/NotifierContext";
 import { useError } from "../context/ErrorContext";
+import { handleAPIRes } from "./helpers/handleAPIRes";
+import { createErrorHandler } from "./helpers/createErrorHandler";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -10,14 +12,17 @@ export const useGetValidCoupons = () => {
 
 
   const { showError } = useError();
+  const handleAPIError = createErrorHandler(showError, "Error al solicitar cupones validos.");
 
   const { event, trigger } = useNotifier();
-  const acceptedEvents = ["init", "has-expired-coupons", "load-user-coupons", "logout"]
+  const acceptedEvents = ["init", 'error', "has-expired-coupons", "load-user-coupons", "logout"]
 
   useEffect(()=>{
+      // Solo realiza la petición si el evento es uno de los aceptados
       if (acceptedEvents.includes(event)) {
         setIsLoading(true);
 
+        // Función que filtra los cupones válidos que el usuario aún no ha usado
         const filterCouponsNotUsed = (validCoupons)=>{
           const userCoupons = JSON.parse(localStorage.getItem('user-coupons')) || [];
           return validCoupons.filter(validCoupon => 
@@ -32,23 +37,14 @@ export const useGetValidCoupons = () => {
             'Accept': 'application/json'
           }
         })
-        .then((res) => 
-          res.json()
-          .then((result) => ({ result, status: res.status }))
-        )
-        .then(({result, status})=> {
-          if (result.error)
-            showError(result.data, status)
-          else {
-            setCoupons(filterCouponsNotUsed(result.data))
-            trigger("");
-          }
-          setIsLoading(false);
+        .then(handleAPIRes)
+        .then(({result})=> {
+          // Establece los cupones válidos no usados por el usuario
+          setCoupons(filterCouponsNotUsed(result));
+          trigger("");
         })
-        .catch((error) => {
-          console.error("Error al solicitar cupones validos.", error);
-          showError();
-        });
+        .catch(handleAPIError)
+        .finally(()=> setIsLoading(false));
       }
    
     },[event])
