@@ -3,32 +3,33 @@ import { useAssignCoupon } from '../../hooks/useAssignCoupon';
 import { useNotifier } from '../../context/NotifierContext';
 import { useAuth } from '../../context/AuthContext';
 
+const brandLogos = {
+  'Adidas': 'adidas',
+  'Asics': 'asics',
+  'Fila': 'fila',
+  'Hummel': 'hummel',
+  'Joma': 'joma',
+  'Kelme': 'kelme',
+  'Le Coq': 'lecoq',
+  'Mizuno': 'mizuno',
+  'New Balance': 'nb',
+  'Nike': 'nike',
+  'Olympikus': 'olympikus',
+  'Puma': 'puma',
+  'Reebok': 'reebok',
+  'Under Armour': 'ua',
+  'Umbro': 'umbro',
+};
+
 export const Card = ({ coupon, countdown, showMessage }) => {
   const {isLoading, assignCoupon} = useAssignCoupon();
 
-  const logos = {
-    'Adidas': 'adidas',
-    'Asics': 'asics',
-    'Fila': 'fila',
-    'Hummel': 'hummel',
-    'Joma': 'joma',
-    'Kelme': 'kelme',
-    'Le Coq': 'lecoq',
-    'Mizuno': 'mizuno',
-    'New Balance': 'nb',
-    'Nike': 'nike',
-    'Olympikus': 'olympikus',
-    'Puma': 'puma',
-    'Reebok': 'reebok',
-    'Under Armour': 'ua',
-    'Umbro': 'umbro',
-  };
 
   const { trigger } = useNotifier();
   const { session } = useAuth();
 
   const handleClick = ()=> {
-    console.log(`./assets/logos/${logos[coupon.brand]}.svg`)
+    console.log(`./assets/logos/${brandLogos[coupon.brand]}.svg`)
     if (session) assignCoupon(coupon.id, showMessage);
     else trigger("use-coupon-without-login");
   }
