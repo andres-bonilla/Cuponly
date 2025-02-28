@@ -16,6 +16,11 @@
   font-size: 2.5rem;
   margin: 0;
   margin-left: 20px;
+  transition: transform 0.3s ease-in-out;
+}
+
+#text-logo:hover {
+  transform: scale(1.025);
 }
 
 .text-with-color {
