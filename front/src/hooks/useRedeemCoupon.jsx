@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNotifier } from "../context/NotifierContext";
 import { useError } from "../context/ErrorContext";
+import { createErrorHandler } from "./helpers/createErrorHandler";
+import { handleAPIRes } from "./helpers/handleAPIRes";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -10,7 +12,9 @@ export const useRedeemCoupon = () => {
 
   const { session } = useAuth();
   const { trigger } = useNotifier();
+
   const { showError } = useError();
+  const handleAPIError = createErrorHandler(showError, "Error al canjear un cupón.");
   
   const redeemCoupon = (couponId, showMessage) => {
     if (session?.user) {
@@ -26,22 +30,13 @@ export const useRedeemCoupon = () => {
         },
         body: JSON.stringify({status: 'redeemed'})
       })
-      .then((res) => 
-        res.json()
-        .then((result) => ({ result, status: res.status })))
-      .then(({result, status})=> {
-        if (result.error)
-          showError(result.data, status)
-        else {
-          trigger(`redeem-coupon`);
-          showMessage();
-        }
-        setIsLoading(false);
+      .then(handleAPIRes)
+      .then(()=> {
+        trigger(`redeem-coupon`);
+        showMessage();
       })
-      .catch((err) => {
-        console.error("Error al canjear un cupón.", err);
-        showError();
-      });
+      .catch(handleAPIError)
+      .finally(()=> setIsLoading(false));
     }
   }
 

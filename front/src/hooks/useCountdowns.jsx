@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 // Función que calcula la cuenta regresiva
-function calcCountdown(expireDate) {
+const calcCountdown = (expireDate) => {
   if (!expireDate) return "";
   const now = new Date();
   const expire = new Date(expireDate);

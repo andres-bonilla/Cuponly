@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNotifier } from "../context/NotifierContext";
 import { useError } from "../context/ErrorContext";
+import { handleAPIRes } from "./helpers/handleAPIRes";
+import { createErrorHandler } from "./helpers/createErrorHandler";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -10,7 +12,9 @@ export const useAssignCoupon = () => {
 
   const { session } = useAuth();
   const { trigger } = useNotifier();
+  
   const { showError } = useError();
+  const handleAPIError = createErrorHandler(showError, "Error al asignar un cupón.");
   
   const assignCoupon = (couponId, showMessage) => {
     if (session?.user) {
@@ -25,22 +29,13 @@ export const useAssignCoupon = () => {
           'Authorization': `Bearer ${session.token}`
         }
       })
-      .then((res) => 
-        res.json()
-        .then((result) => ({ result, status: res.status })))
-      .then(({result, status})=> {
-        if (result.error)
-          showError(result.data, status)
-        else {
-          trigger(`assign-coupon`);
-          showMessage();
-        }
-        setIsLoading(false);
+      .then(handleAPIRes)
+      .then(()=> {
+        trigger(`assign-coupon`);
+        showMessage();
       })
-      .catch((err) => {
-        console.error("Error al asignar un cupón.", err);
-        showError();
-      });
+      .catch(handleAPIError)
+      .finally(()=> setIsLoading(false));
     }
   }
 
