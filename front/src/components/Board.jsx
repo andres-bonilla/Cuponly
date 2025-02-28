@@ -37,7 +37,7 @@ export const Board = () => {
       ? <ul>
           {userCoupons.map((coupon, index) => {
             return <Strip 
-              key={coupon.id * session.user.id} 
+              key={coupon.id} 
               coupon={coupon} 
               countdown={countdowns[index]}
               showMessage={() => openModal(coupon)}
