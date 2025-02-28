@@ -48,12 +48,12 @@ class CouponsService
           ];
     }
 
-    $brands = ['Nike', 'Adidas', 'Puma', 'Reebok', 'Under Armour'];
+    $brands = ['Adidas', 'Asics', 'Fila', 'Hummel', 'Joma', 'Kelme', 'Le Coq', 'Mizuno', 'New Balance', 'Nike', 'Olympikus', 'Puma', 'Reebok', 'Under Armour', 'Umbro'];
 
     while ($count < 18) {
       Coupon::create([
           'brand' => $brands[array_rand($brands)],
-          'discount' => rand(1, 13) * 5,
+          'discount' => rand(2, 13) * 5,
           'status' => CouponStatus::VALID,
           'expiration' => now()->addDays(rand(1, 20))->addMinutes(rand(1, 4) * 15)->addSeconds(rand(1, 60)),
           'usage_period' => rand(12, 72),
