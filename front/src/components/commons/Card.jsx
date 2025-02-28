@@ -29,7 +29,6 @@ export const Card = ({ coupon, countdown, showMessage }) => {
   const { session } = useAuth();
 
   const handleClick = ()=> {
-    console.log(`./assets/logos/${brandLogos[coupon.brand]}.svg`)
     if (session) assignCoupon(coupon.id, showMessage);
     else trigger("use-coupon-without-login");
   }
@@ -38,7 +37,7 @@ export const Card = ({ coupon, countdown, showMessage }) => {
     <li className={`card`} >
       <div className='coupon'>
         <div className="brand">
-          <img src={`./src/assets/logos/${logos[coupon.brand]}.svg`} alt={coupon.brand} />
+          <img src={`./src/assets/logos/${brandLogos[coupon.brand]}.svg`} alt={coupon.brand} />
         </div>
       
         <button 
