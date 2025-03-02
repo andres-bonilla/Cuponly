@@ -2,15 +2,22 @@
 
 namespace App\Services;
 
-use App\Models\User;
+use App\Repositories\UsersRepository;
 use Illuminate\Support\Facades\Hash;
 
 
 class UsersService 
 {
+    protected $usersRepository;
+
+    public function __construct(UsersRepository $usersRepository) 
+    {
+        $this->usersRepository = $usersRepository;
+    }
+    
   public function register(array $data)
   {
-        $user = User::where('email', $data['email'])->first();
+        $user = $this->usersRepository->findByEmail($data['email']);
         if ($user) {
             return [
                 'error' => true, 
@@ -19,7 +26,7 @@ class UsersService
             ];
         }
 
-        $user = User::create($data);
+        $user = $this->usersRepository->create($data);
         if (!$user) {
             return [
                 'error' => true, 
@@ -38,7 +45,7 @@ class UsersService
   //////////////////////////////////////////
 
   public function login(array $data) {
-    $user = User::where('email', $data['email'])->first();
+    $user = $this->usersRepository->findByEmail($data['email']);
 
     // Si no existe o la contraseña es incorrecta, lanzar error
     if (!$user || !Hash::check($data['password'], $user->password)) {
@@ -56,10 +63,6 @@ class UsersService
 
     public function logout($request)
     {
-        //$request->user()->tokens->each(function ($token) {
-          //  $token->delete();
-        //});
-
         if ($request->user()) {
             $request->user()->tokens->each(function ($token) {
                 $token->delete();
@@ -81,39 +84,39 @@ class UsersService
 
   public function update($id, array $data)
   {
-        $user = User::find($id);
+        $user = $this->usersRepository->findById($id);
       
         if (!$user) {
             return ['error' => true, 'data' => 'User not found.', 'code' => 400];
         }
 
-        $user->update($data);
+        $user = $this->usersRepository->update($user, $data);
         return ['error' => false, 'data' => $user, 'code' => 200];
   }
   //////////////////////////////////////////
 
   public function delete($id)
   {
-        $user = User::find($id);
+        $user = $this->usersRepository->findById($id);
         if (!$user) {
             return  ['error' => true, 'data' => 'User not found.', 'code' => 404];
         }
 
         $user->tokens()->delete();
-        $user->delete();
+        $this->usersRepository->delete($user);
         return ['error' => false, 'data' => 'User deleted successfully.', 'code' => 204];
   }
   //////////////////////////////////////////
 
-  public static function getAll()
+  public function getAll()
   {
-      return User::all();
+      return $this->usersRepository->getAll();
   }
   //////////////////////////////////////////
 
   public function find($id)
   {
-    $user = User::find($id);
+    $user = $this->usersRepository->findById($id);
 
     if (!$user) {
         return ['error' => true, 'data' => 'User not found.', 'code' => 404];
