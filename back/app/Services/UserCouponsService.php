@@ -2,52 +2,58 @@
 
 namespace App\Services;
 
-use App\Models\Coupon;
-use App\Models\User;
-use App\Models\UserCoupon;
-use App\Models\UsageStatus;
-use Carbon\Carbon;
+use App\Repositories\UsersRepository;
+use App\Repositories\CouponsRepository;
+use App\Repositories\UserCouponsRepository;
 use Exception;
 
 
 class UserCouponsService 
 {
+  protected $userCouponsRepository;
+  protected $usersRepository;
+  protected $couponsRepository;
+
+  public function __construct(UserCouponsRepository $userCouponsRepository, UsersRepository $usersRepository, CouponsRepository $couponsRepository) 
+  {
+      $this->userCouponsRepository = $userCouponsRepository;
+      $this->usersRepository = $usersRepository;
+      $this->couponsRepository = $couponsRepository;
+  }
+  
   public function getCoupons($id)
   {
-        $user = User::find($id);
-
+        $user = $this->usersRepository->findById($id);
         if (!$user) {
             return ['error' => true, 'data' => 'User not found.', 'code' => 404];
         }
 
-        return ['error' => false, 'data' => $user->coupons, 'code' => 200];
+        $coupons = $this->userCouponsRepository->getCoupons($user);
+        return ['error' => false, 'data' => $coupons, 'code' => 200];
   }
   //////////////////////////////////////////
 
   public function getUsers($couponId)
   {
-    $coupon = Coupon::find($couponId);
-
+    $coupon = $this->couponsRepository->findById($couponId);
     if (!$coupon) {
         return ['error' => true, 'data' => 'Coupon not found.', 'code' => 404];
     }
 
-    return ['error' => false, 'data' => $coupon->users, 'code' => 200];
+    $users = $this->userCouponsRepository->getUsers($coupon);
+    return ['error' => false, 'data' => $users, 'code' => 200];
   }
   //////////////////////////////////////////
 
   public function assign($id, $couponId)
   {
-    $coupon = Coupon::find($couponId);
-    $user = User::find($id);
+    $coupon = $this->couponsRepository->findById($couponId);
+    $user = $this->usersRepository->findById($id);
     if (!$coupon || !$user) {
       return ['error' => true, 'data' => 'Resource not found.', 'code' => 400];
     }
 
-    $userCoupon = UserCoupon::create([
-      'user_id' => $id,
-      'coupon_id' => $couponId,
-    ]);
+    $userCoupon = $this->userCouponsRepository->assign($id, $couponId);
     if (!$userCoupon) {
       return [
           'error' => true, 
@@ -67,9 +73,7 @@ class UserCouponsService
 
   public function update($id, $couponId, $status)
   {
-    $userCoupon = UserCoupon::where('user_id', $id)
-                            ->where('coupon_id', $couponId)
-                            ->first();
+    $userCoupon = $this->userCouponsRepository->find($id, $couponId);
     
     if (!$userCoupon) {
       return [
@@ -79,8 +83,7 @@ class UserCouponsService
       ];
     }
     
-    $userCoupon->usage_status = $status;
-    $userCoupon->save();
+    $userCoupon = $this->userCouponsRepository->updateStatus($userCoupon, $status);
 
     return [
       'error' => false, 
@@ -92,23 +95,7 @@ class UserCouponsService
 
   public function invalidate($id){
     try {
-      $now = Carbon::now();
-
-      UserCoupon::where('user_id', $id) // Filtrar por usuario específico
-        ->where('usage_status', UsageStatus::USED) // Solo cupones usados
-        ->whereHas('coupon') // Solo si el cupón asociado existe
-        ->get()
-        ->each(function ($userCoupon) use ($now) { 
-          //calculamos si ya paso el periodo de uso
-            $period = $userCoupon->coupon->usage_period;
-            $created = $userCoupon->created_at->copy();
-
-            $expirationTime = $created->addHours($period);
-            
-            if ($expirationTime->lessThan($now)) {
-                $userCoupon->update(['usage_status' => UsageStatus::INVALID]);
-            }
-        });
+      $this->userCouponsRepository->invalidate($id);
       
       return [
         'error' => false,

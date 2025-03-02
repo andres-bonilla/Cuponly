@@ -2,17 +2,21 @@
 
 namespace App\Services;
 
-use App\Models\Coupon;
-use App\Models\CouponStatus;
-use App\Models\UserCoupon;
+use App\Repositories\CouponsRepository;
 
-use App\Models\User;
 
 class CouponsService 
 {
+  protected $couponsRepository;
+
+  public function __construct(CouponsRepository $couponsRepository) 
+  {
+      $this->couponsRepository = $couponsRepository;
+  }
+  
   public function create(array $data)
   {
-    $coupon = Coupon::create($data);
+    $coupon = $this->couponsRepository->create($data);
     if (!$coupon) {
         return [
             'error' => true, 
@@ -29,16 +33,14 @@ class CouponsService
   //////////////////////////////////////////
 
   public function expire(){
-    Coupon::where('status', CouponStatus::VALID)
-          ->where('expiration', '<', now()) // Solo los que ya caducaron
-          ->update(['status' => CouponStatus::EXPIRED]); // Marcar como expirados
+    $this->couponsRepository->expire();
      
     return $this->generate();
   }
   //////////////////////////////////////////
 
   public function generate(){
-    $count = Coupon::where('status', CouponStatus::VALID)->count();
+    $count = $this->couponsRepository->countByStatus('valid');
 
     if ($count >= 18) {
         return [
@@ -51,10 +53,10 @@ class CouponsService
     $brands = ['Adidas', 'Asics', 'Fila', 'Hummel', 'Joma', 'Kelme', 'Le Coq', 'Mizuno', 'New Balance', 'Nike', 'Olympikus', 'Puma', 'Reebok', 'Under Armour', 'Umbro'];
 
     while ($count < 18) {
-      Coupon::create([
+      $this->couponsRepository->create([
           'brand' => $brands[array_rand($brands)],
           'discount' => rand(2, 13) * 5,
-          'status' => CouponStatus::VALID,
+          'status' => 'valid',
           'expiration' => now()->addDays(rand(1, 20))->addMinutes(rand(1, 4) * 15)->addSeconds(rand(1, 60)),
           'usage_period' => rand(12, 72),
       ]);
@@ -71,37 +73,37 @@ class CouponsService
 
   public function update($id, array $data)
   {
-    $coupon = Coupon::find($id);
+    $coupon = $this->couponsRepository->findById($id);
       
     if (!$coupon) {
         return ['error' => true, 'data' => 'Coupon not found.', 'code' => 400];
     }
 
-    $coupon->update($data);
+    $coupon = $this->couponsRepository->update($coupon, $data);
     return ['error' => false, 'data' => $coupon, 'code' => 200];
   }
   //////////////////////////////////////////
 
   public function delete($id)
   {
-    $coupon = Coupon::find($id);
+    $coupon = $this->couponsRepository->findById($id);
     if (!$coupon) {
         return  ['error' => true, 'data' => 'Coupon not found.', 'code' => 404];
     }
 
-    $coupon->delete();
+    $this->couponsRepository->delete($coupon);
     return ['error' => false, 'data' => 'Coupon deleted successfully.', 'code' => 204];
   }
   //////////////////////////////////////////
 
   public static function getAll()
   {
-      return Coupon::all();
+      return $this->couponsRepository->getAll();
   }
   //////////////////////////////////////////
 
   public function filter($status) {
-    $coupons = Coupon::where('status', $status)->get();
+    $coupons = $this->couponsRepository->filterByStatus($status);
 
     return ['error' => false, 'data' => $coupons, 'code' => 200];
   }
@@ -109,7 +111,7 @@ class CouponsService
 
   public function find($id)
   {
-    $coupon = Coupon::find($id);
+    $coupon = $this->couponsRepository->findById($id);
 
     if (!$coupon) {
         return ['error' => true, 'data' => 'Coupon not found.', 'code' => 404];
